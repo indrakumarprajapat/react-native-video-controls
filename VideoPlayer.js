@@ -33,6 +33,7 @@ export default class VideoPlayer extends Component {
     rate: 1,
     showTimeRemaining: true,
     showHours: false,
+    controlRate: false,
   };
 
   constructor(props) {
@@ -110,6 +111,7 @@ export default class VideoPlayer extends Component {
       togglePlayPause: this._togglePlayPause.bind(this),
       toggleControls: this._toggleControls.bind(this),
       toggleTimer: this._toggleTimer.bind(this),
+      toggleRate: this._toggleRate.bind(this),
     };
 
     /**
@@ -513,6 +515,16 @@ export default class VideoPlayer extends Component {
       typeof this.events.onPlay === 'function' && this.events.onPlay();
     }
 
+    this.setState(state);
+  }
+  
+  /**
+    * Toggle playback speed state (rate) on <Video> component
+    */
+   _toggleRate() {
+    let state = this.state;
+    let rates = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+    state.rate = rates[(1 + rates.indexOf(state.rate)) % 8];
     this.setState(state);
   }
 
@@ -958,6 +970,9 @@ export default class VideoPlayer extends Component {
     const fullscreenControl = this.props.disableFullscreen
       ? this.renderNullControl()
       : this.renderFullscreen();
+    const RateControl = this.props.controlRate
+      ? this.renderRate()
+      : this.renderNullControl();
 
     return (
       <Animated.View
@@ -976,6 +991,7 @@ export default class VideoPlayer extends Component {
             {backControl}
             <View style={styles.controls.pullRight}>
               {volumeControl}
+              {RateControl}
               {fullscreenControl}
             </View>
           </SafeAreaView>
@@ -1191,6 +1207,17 @@ export default class VideoPlayer extends Component {
     return null;
   }
 
+  /**
+  * Show playback speed (rate) icon
+  */
+    renderRate() {
+    return this.renderControl(
+      <Text style={styles.controls.rateText}>x{this.state.rate}</Text>,
+      this.methods.toggleRate,
+      styles.controls.rate,
+    );
+  }
+ 
   renderError() {
     if (this.state.error) {
       return (
@@ -1377,7 +1404,16 @@ const styles = {
     timer: {
       width: 80,
     },
+    rate: {
+      width: 80,
+    },
     timerText: {
+      backgroundColor: 'transparent',
+      color: '#FFF',
+      fontSize: 11,
+      textAlign: 'right',
+    },
+    rateText: {
       backgroundColor: 'transparent',
       color: '#FFF',
       fontSize: 11,
