@@ -504,6 +504,7 @@ export default class VideoPlayer extends Component {
     }
 
     this.setState(state);
+    this.player.ref.presentFullscreenPlayer();
   }
 
   /**
@@ -1290,8 +1291,7 @@ export default class VideoPlayer extends Component {
             resizeMode={this.state.resizeMode}
             volume={this.state.volume}
             paused={this.state.paused}
-            muted={this.state.muted}
-            rate={this.state.rate}
+            muted={this.state.muted}            
             onLoadStart={this.events.onLoadStart}
             onProgress={this.events.onProgress}
             onError={this.events.onError}
@@ -1300,8 +1300,9 @@ export default class VideoPlayer extends Component {
             onSeek={this.events.onSeek}
             style={[styles.player.video, this.styles.videoStyle]}
             source={this.props.source}
-
             rate={this.state.playRate}
+            fullscreenAutorotate= {true}
+            fullscreenOrientation= {'all'}
           />
 
           {this.renderError()}
@@ -1556,3 +1557,4 @@ const styles = {
     },
   }),
 };
+
